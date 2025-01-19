@@ -9,8 +9,13 @@ import "bootstrap-icons/font/bootstrap-icons.css";
 import { generate, count } from "random-words";
 import Head from "next/head";
 
+// sweet alert
+import Swal from 'sweetalert2';
+
 
 export default function Home() {
+  const ipServer = "http://100.127.215.3"
+
   const [choiceCounting, setCounting] = useState(0);
   const [currentQueue, setQueue] = useState(Math.floor(Math.random() * 4));
 
@@ -18,7 +23,7 @@ export default function Home() {
   const [initRandomState, setInitState] = useState(true);
   const [loading, setLoading] = useState(false);
 
-  const [word, setWord] = useState("Starting Random Word here")
+  const [word, setWord] = useState("Welcome to Singolingo")
   const [answer, setAnswer] = useState<string>("")
   const [choice, setChoice] = useState<string[]>([])
 
@@ -32,14 +37,17 @@ export default function Home() {
 
   const [error, setError] = useState(false);
 
+  const [hardLevel, setHardLevel] = useState(3);
+
   const bestScore = useRef(0);
 
   const vocabRandom = async () => {
+
     let randWord: any = generate({wordsPerString: 2})
 
     setWord(randWord)
 
-    await translate(randWord, { to: "th", corsUrl: "http://localhost:8080/" })
+    await translate(randWord, { to: "th", corsUrl: ipServer + ":8080/" })
       .then((res: { text: SetStateAction<string>; }) => {
         //console.log(res.text)
         setAnswer(res.text)
@@ -55,7 +63,7 @@ export default function Home() {
     // let currentList: string[] = [];
 
     for (let i = 0; i < 3; i++) {
-      await translate(randWord[i], { to: "th", corsUrl: "http://localhost:8080/" })
+      await translate(randWord[i], { to: "th", corsUrl: ipServer + ":8080/" })
         .then((res: { text: SetStateAction<string>; }) => {
 
 
@@ -87,14 +95,27 @@ export default function Home() {
   }
 
   // Answering
-  const answerQuestion = (word: string) => {
+  const answerQuestion = (wordNow: string) => {
     if (answerKey === -1) {
-      alert("Please select your answer");
+      Swal.fire({
+        title: 'Please select your answer',
+        text: 'กรุณาเลือกคำตอบก่อน',
+        icon: 'warning',
+        confirmButtonText: 'Okay'
+      })
+      // alert("Please select your answer");
+      return;
     }
 
     setAnswerVal("");
     setAnswerKey(-1);
-    if (word === answer) {
+    if (wordNow === answer) {
+      Swal.fire({
+        title: 'You\'re the best!',
+        text: 'ถูกต้องแล้วว',
+        icon: 'success',
+        confirmButtonText: 'GO!'
+      })
       setScore(score + 1);
       
       if (score >= bestScore.current) {
@@ -102,8 +123,24 @@ export default function Home() {
       }
 
     } else {
+      Swal.fire({
+        title: word + " แปลว่า " + answer,
+        text: 'This is correct answer',
+        icon: 'error',
+        confirmButtonText: 'I\'ll try again!'
+      })
+      // alert("Correct Answer : " + answer);
       setMistake(mistake + 1);
+      setHardLevel(3);
       setScore(0);
+    }
+
+    // get hard lvl
+    
+    if (score % 10 == 0) {
+      console.log("score"+score);
+      setHardLevel(hardLevel + 1);
+      
     }
 
     findingWord();
@@ -126,13 +163,17 @@ export default function Home() {
     setInitState(true)
     setLoading(true)
 
+    
+
+    console.log(hardLevel);
+
     // Random answer word
     // vocabRandom();
-    let randWord: any = generate()
+    let randWord: any = generate({minLength: hardLevel})
 
     setWord(randWord)
 
-    await translate(randWord, { to: "th", corsUrl: "http://localhost:8080/" })
+    await translate(randWord, { to: "th", corsUrl: ipServer + ":8080/" })
       .then((res: { text: SetStateAction<string>; }) => {
         //console.log(res.text)
         setAnswer(res.text)
@@ -148,7 +189,7 @@ export default function Home() {
     // let currentList: string[] = [];
 
     for (let i = 0; i < 3; i++) {
-      await translate(randWordMany[i], { to: "th", corsUrl: "http://localhost:8080/" })
+      await translate(randWordMany[i], { to: "th", corsUrl: ipServer + ":8080/" })
         .then((res: { text: SetStateAction<string>; }) => {
 
 
@@ -233,7 +274,7 @@ export default function Home() {
           Best Score&nbsp;
           <code className="font-mono font-bold text-lime-400">{bestScore.current}</code>
         </p>
-        <div className="fixed bottom-0 left-0 flex h-48 w-full items-end justify-center bg-gradient-to-t from-white via-white dark:from-black dark:via-black lg:static lg:size-auto lg:bg-none">
+        <div className="hidden lg:inline fixed bottom-0 left-0 flex h-0 w-full items-end justify-center from-white via-white dark:from-black dark:via-black lg:static lg:size-auto lg:bg-none">
           <a
             className="pointer-events-none flex place-items-center gap-2 p-8 lg:pointer-events-auto lg:p-0"
             href=""
