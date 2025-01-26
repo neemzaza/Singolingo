@@ -37,30 +37,10 @@ export default function Home() {
 
   const [error, setError] = useState(false);
 
-  const [hardLevel, setHardLevel] = useState(3);
-
   const bestScore = useRef(0);
-
-  const vocabRandom = async () => {
-
-    let randWord: any = generate({wordsPerString: 2})
-
-    setWord(randWord)
-
-    await translate(randWord, { to: "th", corsUrl: ipServer + ":8080/" })
-      .then((res: { text: SetStateAction<string>; }) => {
-        //console.log(res.text)
-        setAnswer(res.text)
-        // console.info("Answer OK")
-      }).catch((err: any) => {
-        console.error(err);
-        setError(true);
-      })
-  }
 
   const choiceMake = async () => {
     let randWord: any = generate(3)
-    // let currentList: string[] = [];
 
     for (let i = 0; i < 3; i++) {
       await translate(randWord[i], { to: "th", corsUrl: ipServer + ":8080/" })
@@ -77,9 +57,6 @@ export default function Home() {
             }
 
           })
-
-
-          //setSpy([...spy, res.text])
           console.log(res.text);
 
         }).catch((err: any) => {
@@ -87,9 +64,6 @@ export default function Home() {
           setError(true);
         })
     }
-
-    // console.log("result")
-    // console.log( currentList)
 
 
   }
@@ -131,18 +105,11 @@ export default function Home() {
       })
       // alert("Correct Answer : " + answer);
       setMistake(mistake + 1);
-      setHardLevel(3);
       setScore(0);
     }
 
     // get hard lvl
     
-    if (score % 10 == 0) {
-      console.log("score"+score);
-      setHardLevel(hardLevel + 1);
-      
-    }
-
     findingWord();
   }
 
@@ -163,19 +130,14 @@ export default function Home() {
     setInitState(true)
     setLoading(true)
 
-    
-
-    console.log(hardLevel);
-
     // Random answer word
     // vocabRandom();
-    let randWord: any = generate({minLength: hardLevel})
+    let randWord: any = generate({minLength: 5})
 
     setWord(randWord)
 
     await translate(randWord, { to: "th", corsUrl: ipServer + ":8080/" })
       .then((res: { text: SetStateAction<string>; }) => {
-        //console.log(res.text)
         setAnswer(res.text)
         console.info("Answer OK")
       }).catch((err: any) => {
@@ -205,7 +167,6 @@ export default function Home() {
           })
 
 
-          //setSpy([...spy, res.text])
           console.log(res.text);
 
         }).catch((err: any) => {
@@ -281,8 +242,9 @@ export default function Home() {
             target="_blank"
             rel="noopener noreferrer"
           >
-            By{" "}
-            Google Translate API
+            Singolingo: English Learning
+            <br />
+            By Google Translate API
           </a>
         </div>
       </div>
@@ -292,7 +254,6 @@ export default function Home() {
         <br />
         <hr />
         <br />
-        {/* <p className="text-center">{answer}</p> */}
       </div>
 
       {
@@ -315,36 +276,6 @@ export default function Home() {
         <br />
         {/* <hr /> */}
         <br />
-
-        {/* <a
-          href="#"
-          onClick={() => vocabRandom()}
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          rel="noopener noreferrer"
-        >
-          <h2 className="mb-3 text-2xl font-semibold">
-            Random{" "}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-        </a>
-
-        <a
-          href="#"
-          onClick={() => choiceMake()}
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          rel="noopener noreferrer"
-        >
-          <h2 className="mb-3 text-2xl font-semibold">
-            Crud{" "}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-        </a> */}
-
-        {/* <hr /> */}
 
 
       </div>
