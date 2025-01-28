@@ -14,7 +14,7 @@ import Swal from 'sweetalert2';
 
 
 export default function Home() {
-  const ipServer = "http://100.127.215.3"
+  const ipServer = "http://localhost"
 
   const [choiceCounting, setCounting] = useState(0);
   const [currentQueue, setQueue] = useState(Math.floor(Math.random() * 4));
@@ -136,14 +136,29 @@ export default function Home() {
 
     setWord(randWord)
 
-    await translate(randWord, { to: "th", corsUrl: ipServer + ":8080/" })
-      .then((res: { text: SetStateAction<string>; }) => {
-        setAnswer(res.text)
-        console.info("Answer OK")
-      }).catch((err: any) => {
+    await fetch('/api/translate', {
+      method: 'POST',
+      headers: {
+          'Content-type': 'application/json',
+      },
+      body: JSON.stringify({
+        text: randWord
+      })
+    }).then((res: Response) => res.json()).then((data) => {
+      setAnswer(data.text)
+    }).catch((err: any) => {
         console.error(err);
         setError(true);
       })
+
+    // await translate(randWord, { to: "th", corsUrl: ipServer + ":8080/" })
+    //   .then((res: { text: SetStateAction<string>; }) => {
+    //     setAnswer(res.text)
+    //     console.info("Answer OK")
+    //   }).catch((err: any) => {
+    //     console.error(err);
+    //     setError(true);
+    //   })
 
     // Random other choice
     // choiceMake();
@@ -151,28 +166,55 @@ export default function Home() {
     // let currentList: string[] = [];
 
     for (let i = 0; i < 3; i++) {
-      await translate(randWordMany[i], { to: "th", corsUrl: ipServer + ":8080/" })
-        .then((res: { text: SetStateAction<string>; }) => {
+      await fetch('/api/translate', {
+        method: 'POST',
+        headers: {
+            'Content-type': 'application/json',
+        },
+        body: JSON.stringify({
+          text: randWordMany[i]
+        })
+      }).then((res: Response) => res.json()).then((res: any) => {
+          
+        setChoice((prevItem: any) => {
+          // currentList.push(res.text.toString())
+
+          if (prevItem.length === 0) {
+            return [res.text]
+          } else {
+            return [...prevItem, res.text]
+          }
+
+        })
 
 
-          setChoice((prevItem: any) => {
-            // currentList.push(res.text.toString())
-
-            if (prevItem.length === 0) {
-              return [res.text]
-            } else {
-              return [...prevItem, res.text]
-            }
-
-          })
-
-
-          console.log(res.text);
-
+        console.log(res.text);
         }).catch((err: any) => {
           console.error(err);
           setError(true);
         })
+      // await translate(randWordMany[i], { to: "th", corsUrl: ipServer + ":8080/" })
+      //   .then((res: { text: SetStateAction<string>; }) => {
+
+
+      //     setChoice((prevItem: any) => {
+      //       // currentList.push(res.text.toString())
+
+      //       if (prevItem.length === 0) {
+      //         return [res.text]
+      //       } else {
+      //         return [...prevItem, res.text]
+      //       }
+
+      //     })
+
+
+      //     console.log(res.text);
+
+      //   }).catch((err: any) => {
+      //     console.error(err);
+      //     setError(true);
+      //   })
     }
 
     setLoading(false)
