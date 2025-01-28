@@ -1,6 +1,7 @@
 "use client"
 
 import Image from "next/image";
+// @ts-ignore
 import { translate } from "google-translate-api-browser"
 import { SetStateAction, useEffect, useState, useRef } from "react";
 

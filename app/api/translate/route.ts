@@ -1,5 +1,5 @@
+// @ts-ignore
 import { translate } from "google-translate-api-browser"
-
 
 export async function POST(req: Request) {
   try {
