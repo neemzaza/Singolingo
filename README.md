@@ -1,5 +1,7 @@
 Singolingo is developed by Sarut Ardnarong and 4 other contributor. Bootstraped by [Next.js](https://nextjs.org/)
 
+## NOW! Singolingo published on [https://singolingo.vercel.app/](https://singolingo.vercel.app/#)
+
 ## Getting Started
 
 First, clone this project to your computer and run this command
